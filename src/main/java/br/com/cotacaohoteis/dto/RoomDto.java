@@ -26,7 +26,7 @@ private String categoryName;
 @JsonProperty("totalPrice")
 private BigDecimal totalPrice;
 @JsonProperty("priceDetail")
-private PriceDetailDto priceDetail;
+private Map<String, BigDecimal> priceDetail;
 @JsonIgnore
 private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -61,12 +61,12 @@ this.totalPrice = totalPrice;
 }
 
 @JsonProperty("priceDetail")
-public PriceDetailDto getPriceDetail() {
+public Map<String, BigDecimal> getPriceDetail() {
 return priceDetail;
 }
 
 @JsonProperty("priceDetail")
-public void setPriceDetail(PriceDetailDto priceDetail) {
+public void setPriceDetail(Map<String, BigDecimal> priceDetail) {
 this.priceDetail = priceDetail;
 }
 

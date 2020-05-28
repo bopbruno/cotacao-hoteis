@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.cotacaohoteis.domain.Hotel;
 import br.com.cotacaohoteis.domain.Room;
 import br.com.cotacaohoteis.dto.HotelDto;
-import br.com.cotacaohoteis.dto.PriceDetailDto;
 import br.com.cotacaohoteis.dto.RoomDto;
 import br.com.cotacaohoteis.service.CotacaoService;
 import io.swagger.annotations.ApiParam;
@@ -32,8 +33,8 @@ public class CotacaoController {
 	@Autowired
 	private ServerController sc;
 	
-	@GetMapping(value = "/hotel/cidade/{cityCode}")
-	public List<HotelDto> getContacaoHoteisCidade(@PathVariable int cityCode,
+	@GetMapping(value = "/hotel/cidade")
+	public List<HotelDto> getContacaoHoteisCidade(@RequestParam int cityCode,
 			@ApiParam(value = "ddMMyyyy",required = true) @RequestParam(required = true) @DateTimeFormat(pattern="ddMMyyyy") Date checkin,
 			@ApiParam(value = "ddMMyyyy",required = true) @RequestParam(required = true) @DateTimeFormat(pattern="ddMMyyyy") Date checkout,
 			@RequestParam(required = true) int quantidadeAdultos,
@@ -42,9 +43,8 @@ public class CotacaoController {
 		long diffInMillies = Math.abs(checkout.getTime() - checkin.getTime());
    	    int quantidadeDias = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 		
-		
 		List<Hotel> hoteis = cotacaoService.getCotacaoHoteisCidade(cityCode);
-   	    //List<Hotel> hoteis = sc.getListaHotel();
+		
 		List<HotelDto> hoteisDto = new ArrayList<HotelDto>();
 		long start = System.nanoTime();
 		int tamanho = hoteis.size();
@@ -58,8 +58,8 @@ public class CotacaoController {
 		return hoteisDto;
 	}
 
-	@GetMapping(value = "/hotel/{idHotel}")
-	public HotelDto getCotacaoHotel(@PathVariable int idHotel,
+	@GetMapping(value = "/hotel")
+	public HotelDto getCotacaoHotel(@RequestParam int idHotel,
 			@ApiParam(value = "ddMMyyyy",required = true) @RequestParam(required = true) @DateTimeFormat(pattern="ddMMyyyy") Date checkin,
 			@ApiParam(value = "ddMMyyyy",required = true) @RequestParam(required = true) @DateTimeFormat(pattern="ddMMyyyy") Date checkout,
 			@RequestParam(required = true) int quantidadeAdultos,
@@ -96,18 +96,18 @@ public class CotacaoController {
 			
 			Room room = rooms.get(i);
 			
-			PriceDetailDto priceDetailDto = new PriceDetailDto();
+			Map<String, BigDecimal> priceDetailDto = new HashMap<>();
 			
 			BigDecimal valorComissao = new BigDecimal("0.7");
 			
-			BigDecimal precoPorDiaAdulto = BigDecimal.valueOf(room.getPrice().getAdult());
-			BigDecimal precoPorDiaCrianca = BigDecimal.valueOf(room.getPrice().getChild());
+			BigDecimal precoPorDiaAdulto = room.getPrice().get("adult");
+			BigDecimal precoPorDiaCrianca = room.getPrice().get("child");
 			
 			precoPorDiaAdulto = precoPorDiaAdulto.divide(valorComissao, 2,RoundingMode.FLOOR);
 			precoPorDiaCrianca = precoPorDiaCrianca.divide(valorComissao, 2,RoundingMode.FLOOR);
 			
-			priceDetailDto.setPricePerDayAdult(precoPorDiaAdulto);
-			priceDetailDto.setPricePerDayChild(precoPorDiaCrianca);
+			priceDetailDto.put("pricePerDayAdult", precoPorDiaAdulto);
+			priceDetailDto.put("pricePerDayChild", precoPorDiaCrianca);
 			
 			BigDecimal precoTotal = precoPorDiaAdulto.multiply(new BigDecimal(quantidadeAdulto).multiply(new BigDecimal(quantidadeDias))).add(precoPorDiaCrianca.multiply(new BigDecimal(quantidadeCrianca).multiply(new BigDecimal(quantidadeDias))));
 			
