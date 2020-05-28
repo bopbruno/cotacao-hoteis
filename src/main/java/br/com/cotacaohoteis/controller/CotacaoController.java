@@ -1,6 +1,8 @@
 package br.com.cotacaohoteis.controller;
 
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,19 +43,19 @@ public class CotacaoController {
    	    int quantidadeDias = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 		
 		
-		//List<Hotel> hoteis = cotacaoService.getCotacaoHoteisCidade(cityCode);
-   	    List<Hotel> hoteis = sc.getListaHotel();
+		List<Hotel> hoteis = cotacaoService.getCotacaoHoteisCidade(cityCode);
+   	    //List<Hotel> hoteis = sc.getListaHotel();
 		List<HotelDto> hoteisDto = new ArrayList<HotelDto>();
 		long start = System.nanoTime();
-		
-		for(Hotel hotel : hoteis) {
-			hoteisDto.add(this.converterHotelParaHotelDto(hotel,quantidadeAdultos,quantidadeCriancas,quantidadeDias));
+		int tamanho = hoteis.size();
+		for(int i =0; i < tamanho; i++) {
+			hoteisDto.add(this.converterHotelParaHotelDto(hoteis.get(i),quantidadeAdultos,quantidadeCriancas,quantidadeDias));
 		}
 		
 		long finish = System.nanoTime();
 		long timeElapsed = finish - start;
 		System.out.println((double)timeElapsed / 1_000_000_000.0);
-		return null;
+		return hoteisDto;
 	}
 
 	@GetMapping(value = "/hotel/{idHotel}")
@@ -88,20 +90,28 @@ public class CotacaoController {
 	private List<RoomDto> converterRoomsParaRoomsDto(List<Room> rooms, int quantidadeAdulto, int quantidadeCrianca, int quantidadeDias) {
 		List<RoomDto> roomDtos = new ArrayList<RoomDto>();
 		
-		RoomDto roomDto = new RoomDto();
+		int tamanho = rooms.size();
 		
-		for(Room room : rooms) {
+		for(int i=0;i<tamanho;i++) {
+			
+			Room room = rooms.get(i);
 			
 			PriceDetailDto priceDetailDto = new PriceDetailDto();
 			
-			double precoPorDiaAdulto = room.getPrice().getAdult();
-			double precoPorDiaCrianca = room.getPrice().getChild();
+			BigDecimal valorComissao = new BigDecimal("0.7");
+			
+			BigDecimal precoPorDiaAdulto = BigDecimal.valueOf(room.getPrice().getAdult());
+			BigDecimal precoPorDiaCrianca = BigDecimal.valueOf(room.getPrice().getChild());
+			
+			precoPorDiaAdulto = precoPorDiaAdulto.divide(valorComissao, 2,RoundingMode.FLOOR);
+			precoPorDiaCrianca = precoPorDiaCrianca.divide(valorComissao, 2,RoundingMode.FLOOR);
 			
 			priceDetailDto.setPricePerDayAdult(precoPorDiaAdulto);
 			priceDetailDto.setPricePerDayChild(precoPorDiaCrianca);
 			
-			double precoTotal = (precoPorDiaAdulto*quantidadeAdulto*quantidadeDias) + (precoPorDiaCrianca*quantidadeCrianca*quantidadeDias);
+			BigDecimal precoTotal = precoPorDiaAdulto.multiply(new BigDecimal(quantidadeAdulto).multiply(new BigDecimal(quantidadeDias))).add(precoPorDiaCrianca.multiply(new BigDecimal(quantidadeCrianca).multiply(new BigDecimal(quantidadeDias))));
 			
+			RoomDto roomDto = new RoomDto();
 			roomDto.setRoomID(room.getRoomID());
 			roomDto.setCategoryName(room.getCategoryName());
 			roomDto.setTotalPrice(precoTotal);

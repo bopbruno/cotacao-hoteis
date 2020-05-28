@@ -1,5 +1,6 @@
 package br.com.cotacaohoteis.dto;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -23,7 +24,7 @@ private Integer roomID;
 @JsonProperty("categoryName")
 private String categoryName;
 @JsonProperty("totalPrice")
-private Double totalPrice;
+private BigDecimal totalPrice;
 @JsonProperty("priceDetail")
 private PriceDetailDto priceDetail;
 @JsonIgnore
@@ -50,12 +51,12 @@ this.categoryName = categoryName;
 }
 
 @JsonProperty("totalPrice")
-public Double getTotalPrice() {
+public BigDecimal getTotalPrice() {
 return totalPrice;
 }
 
 @JsonProperty("totalPrice")
-public void setTotalPrice(Double totalPrice) {
+public void setTotalPrice(BigDecimal totalPrice) {
 this.totalPrice = totalPrice;
 }
 

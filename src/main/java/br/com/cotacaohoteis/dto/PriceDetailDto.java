@@ -1,5 +1,6 @@
 package br.com.cotacaohoteis.dto;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -17,29 +18,29 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class PriceDetailDto {
 
 @JsonProperty("pricePerDayAdult")
-private Double pricePerDayAdult;
+private BigDecimal pricePerDayAdult;
 @JsonProperty("pricePerDayChild")
-private Double pricePerDayChild;
+private BigDecimal pricePerDayChild;
 @JsonIgnore
 private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
 @JsonProperty("pricePerDayAdult")
-public Double getPricePerDayAdult() {
+public BigDecimal getPricePerDayAdult() {
 return pricePerDayAdult;
 }
 
 @JsonProperty("pricePerDayAdult")
-public void setPricePerDayAdult(Double pricePerDayAdult) {
+public void setPricePerDayAdult(BigDecimal pricePerDayAdult) {
 this.pricePerDayAdult = pricePerDayAdult;
 }
 
 @JsonProperty("pricePerDayChild")
-public Double getPricePerDayChild() {
+public BigDecimal getPricePerDayChild() {
 return pricePerDayChild;
 }
 
 @JsonProperty("pricePerDayChild")
-public void setPricePerDayChild(Double pricePerDayChild) {
+public void setPricePerDayChild(BigDecimal pricePerDayChild) {
 this.pricePerDayChild = pricePerDayChild;
 }
 
