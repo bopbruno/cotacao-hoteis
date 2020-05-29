@@ -66,7 +66,7 @@ public class CotacaoControllerTest {
 		
 		BDDMockito.given(this.cotacaoService.getCotacaoHoteisCidade(Mockito.anyInt())).willReturn(hoteis);
 		
-		mvc.perform(MockMvcRequestBuilders.get("/hotel/cidade?cityCode=9626&checkin=27052020&checkout=26052020&quantidadeAdultos=1&quantidadeCriancas=1").accept(MediaType.APPLICATION_JSON))
+		mvc.perform(MockMvcRequestBuilders.get("/hotel/cidade?cityCode=9626&checkin=27052020&checkout=28052020&quantidadeAdultos=1&quantidadeCriancas=1").accept(MediaType.APPLICATION_JSON))
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.[0].id").value(0))
 		.andExpect(jsonPath("$.[0].cityName").value("São Paulo"))
