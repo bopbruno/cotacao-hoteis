@@ -11,73 +11,68 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-"roomID",
-"categoryName",
-"totalPrice",
-"priceDetail"
-})
+@JsonPropertyOrder({ "roomID", "categoryName", "totalPrice", "priceDetail" })
 public class RoomDto {
 
-@JsonProperty("roomID")
-private Integer roomID;
-@JsonProperty("categoryName")
-private String categoryName;
-@JsonProperty("totalPrice")
-private BigDecimal totalPrice;
-@JsonProperty("priceDetail")
-private Map<String, BigDecimal> priceDetail;
-@JsonIgnore
-private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	@JsonProperty("roomID")
+	private Integer roomID;
+	@JsonProperty("categoryName")
+	private String categoryName;
+	@JsonProperty("totalPrice")
+	private BigDecimal totalPrice;
+	@JsonProperty("priceDetail")
+	private Map<String, BigDecimal> priceDetail;
+	@JsonIgnore
+	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-@JsonProperty("roomID")
-public Integer getRoomID() {
-return roomID;
-}
+	@JsonProperty("roomID")
+	public Integer getRoomID() {
+		return roomID;
+	}
 
-@JsonProperty("roomID")
-public void setRoomID(Integer roomID) {
-this.roomID = roomID;
-}
+	@JsonProperty("roomID")
+	public void setRoomID(Integer roomID) {
+		this.roomID = roomID;
+	}
 
-@JsonProperty("categoryName")
-public String getCategoryName() {
-return categoryName;
-}
+	@JsonProperty("categoryName")
+	public String getCategoryName() {
+		return categoryName;
+	}
 
-@JsonProperty("categoryName")
-public void setCategoryName(String categoryName) {
-this.categoryName = categoryName;
-}
+	@JsonProperty("categoryName")
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
 
-@JsonProperty("totalPrice")
-public BigDecimal getTotalPrice() {
-return totalPrice;
-}
+	@JsonProperty("totalPrice")
+	public BigDecimal getTotalPrice() {
+		return totalPrice;
+	}
 
-@JsonProperty("totalPrice")
-public void setTotalPrice(BigDecimal totalPrice) {
-this.totalPrice = totalPrice;
-}
+	@JsonProperty("totalPrice")
+	public void setTotalPrice(BigDecimal totalPrice) {
+		this.totalPrice = totalPrice;
+	}
 
-@JsonProperty("priceDetail")
-public Map<String, BigDecimal> getPriceDetail() {
-return priceDetail;
-}
+	@JsonProperty("priceDetail")
+	public Map<String, BigDecimal> getPriceDetail() {
+		return priceDetail;
+	}
 
-@JsonProperty("priceDetail")
-public void setPriceDetail(Map<String, BigDecimal> priceDetail) {
-this.priceDetail = priceDetail;
-}
+	@JsonProperty("priceDetail")
+	public void setPriceDetail(Map<String, BigDecimal> priceDetail) {
+		this.priceDetail = priceDetail;
+	}
 
-@JsonAnyGetter
-public Map<String, Object> getAdditionalProperties() {
-return this.additionalProperties;
-}
+	@JsonAnyGetter
+	public Map<String, Object> getAdditionalProperties() {
+		return this.additionalProperties;
+	}
 
-@JsonAnySetter
-public void setAdditionalProperty(String name, Object value) {
-this.additionalProperties.put(name, value);
-}
+	@JsonAnySetter
+	public void setAdditionalProperty(String name, Object value) {
+		this.additionalProperties.put(name, value);
+	}
 
 }

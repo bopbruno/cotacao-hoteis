@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,8 +29,7 @@ public class CotacaoController {
 	@Autowired
 	private CotacaoService cotacaoService;
 	
-	@Autowired
-	private ServerController sc;
+	private BigDecimal VALOR_COMISSAO = new BigDecimal("0.7");
 	
 	@GetMapping(value = "/hotel/cidade")
 	public List<HotelDto> getContacaoHoteisCidade(@RequestParam int cityCode,
@@ -46,15 +44,12 @@ public class CotacaoController {
 		List<Hotel> hoteis = cotacaoService.getCotacaoHoteisCidade(cityCode);
 		
 		List<HotelDto> hoteisDto = new ArrayList<HotelDto>();
-		long start = System.nanoTime();
+		
 		int tamanho = hoteis.size();
 		for(int i =0; i < tamanho; i++) {
 			hoteisDto.add(this.converterHotelParaHotelDto(hoteis.get(i),quantidadeAdultos,quantidadeCriancas,quantidadeDias));
 		}
 		
-		long finish = System.nanoTime();
-		long timeElapsed = finish - start;
-		System.out.println((double)timeElapsed / 1_000_000_000.0);
 		return hoteisDto;
 	}
 
@@ -67,7 +62,6 @@ public class CotacaoController {
 		
 		long diffInMillies = Math.abs(checkout.getTime() - checkin.getTime());
    	    int quantidadeDias = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-		
 		
 		Hotel hotel = cotacaoService.getCotacaoHotel(idHotel).get(0);
 		
@@ -98,18 +92,20 @@ public class CotacaoController {
 			
 			Map<String, BigDecimal> priceDetailDto = new HashMap<>();
 			
-			BigDecimal valorComissao = new BigDecimal("0.7");
-			
 			BigDecimal precoPorDiaAdulto = room.getPrice().get("adult");
 			BigDecimal precoPorDiaCrianca = room.getPrice().get("child");
 			
-			precoPorDiaAdulto = precoPorDiaAdulto.divide(valorComissao, 2,RoundingMode.FLOOR);
-			precoPorDiaCrianca = precoPorDiaCrianca.divide(valorComissao, 2,RoundingMode.FLOOR);
+			precoPorDiaAdulto = precoPorDiaAdulto.multiply(new BigDecimal(quantidadeDias)).multiply(new BigDecimal(quantidadeAdulto));
+			precoPorDiaCrianca = precoPorDiaCrianca.multiply(new BigDecimal(quantidadeDias)).multiply(new BigDecimal(quantidadeCrianca));
+			
+			//calcula a comissao
+			precoPorDiaAdulto = precoPorDiaAdulto.divide(VALOR_COMISSAO, 2,RoundingMode.FLOOR);
+			precoPorDiaCrianca = precoPorDiaCrianca.divide(VALOR_COMISSAO, 2,RoundingMode.FLOOR);
 			
 			priceDetailDto.put("pricePerDayAdult", precoPorDiaAdulto);
 			priceDetailDto.put("pricePerDayChild", precoPorDiaCrianca);
 			
-			BigDecimal precoTotal = precoPorDiaAdulto.multiply(new BigDecimal(quantidadeAdulto).multiply(new BigDecimal(quantidadeDias))).add(precoPorDiaCrianca.multiply(new BigDecimal(quantidadeCrianca).multiply(new BigDecimal(quantidadeDias))));
+			BigDecimal precoTotal = precoPorDiaAdulto.add(precoPorDiaCrianca);
 			
 			RoomDto roomDto = new RoomDto();
 			roomDto.setRoomID(room.getRoomID());
