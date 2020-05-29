@@ -74,7 +74,7 @@ public class CotacaoControllerTest {
 		.andExpect(jsonPath("$.[0].rooms.[0].categoryName").value("Standard"))
 		.andExpect(jsonPath("$.[0].rooms.[0].totalPrice").value("16917.4"))		
 		.andExpect(jsonPath("$.[0].rooms.[0].priceDetail.pricePerDayAdult").value("1691.74"))
-		.andExpect(jsonPath("$.[0].rooms.[0].priceDetail.pricePerDayChild").value("0.0"))
+		.andExpect(jsonPath("$.[0].rooms.[0].priceDetail.pricePerDayChild").value("1366.37"))
 		;
 		
 	}

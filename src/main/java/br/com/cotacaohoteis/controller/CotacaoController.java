@@ -13,9 +13,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.com.cotacaohoteis.domain.Hotel;
 import br.com.cotacaohoteis.domain.Room;
@@ -40,7 +42,8 @@ public class CotacaoController {
 			@RequestParam(required = true) int quantidadeCriancas) {
 		
 		if(checkout.before(checkin)) {
-			return new ArrayList<HotelDto>();
+			throw new ResponseStatusException(
+			    	HttpStatus.BAD_REQUEST, "Data checkout anterior a data checkin");
 		}
 		
 		long diffInMillies = Math.abs(checkout.getTime() - checkin.getTime());
@@ -48,6 +51,11 @@ public class CotacaoController {
    	    int quantidadeDias = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 		
 		List<Hotel> hoteis = cotacaoService.getCotacaoHoteisCidade(cityCode);
+		
+		if(hoteis.isEmpty()) {
+			throw new ResponseStatusException(
+			    	HttpStatus.NOT_FOUND, "Cidade com id "+cityCode+" não encontrada");
+		}
 		
 		List<HotelDto> hoteisDto = new ArrayList<HotelDto>();
 		
@@ -69,8 +77,14 @@ public class CotacaoController {
 				
 		long diffInMillies = Math.abs(checkout.getTime() - checkin.getTime());
    	    int quantidadeDias = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+   	    List<Hotel> hoteis = cotacaoService.getCotacaoHotel(idHotel);
+   	    
+   	    if(hoteis.isEmpty()) {
+   	    	throw new ResponseStatusException(
+   	             HttpStatus.NOT_FOUND, "Hotel com id "+idHotel+" não encontrado");
+   	    }
 		
-		Hotel hotel = cotacaoService.getCotacaoHotel(idHotel).get(0);
+		Hotel hotel = hoteis.get(0);
 		
 		HotelDto hotelDto = this.converterHotelParaHotelDto(hotel,quantidadeAdultos,quantidadeCriancas,quantidadeDias);
 		
@@ -102,9 +116,6 @@ public class CotacaoController {
 			BigDecimal precoPorDiaAdulto = room.getPrice().get("adult");
 			BigDecimal precoPorDiaCrianca = room.getPrice().get("child");
 			
-			precoPorDiaAdulto = precoPorDiaAdulto.multiply(new BigDecimal(quantidadeAdulto));
-			precoPorDiaCrianca = precoPorDiaCrianca.multiply(new BigDecimal(quantidadeCrianca));
-			
 			//calcula a comissao
 			precoPorDiaAdulto = precoPorDiaAdulto.divide(VALOR_COMISSAO, 2,RoundingMode.FLOOR);
 			precoPorDiaCrianca = precoPorDiaCrianca.divide(VALOR_COMISSAO, 2,RoundingMode.FLOOR);
@@ -112,8 +123,8 @@ public class CotacaoController {
 			priceDetailDto.put("pricePerDayAdult", precoPorDiaAdulto);
 			priceDetailDto.put("pricePerDayChild", precoPorDiaCrianca);
 			
-			BigDecimal precoTotalPorAdulto = precoPorDiaAdulto.multiply(new BigDecimal(quantidadeDias));
-			BigDecimal precoTotalPorCrianca = precoPorDiaCrianca.multiply(new BigDecimal(quantidadeDias));
+			BigDecimal precoTotalPorAdulto = precoPorDiaAdulto.multiply(new BigDecimal(quantidadeDias)).multiply(new BigDecimal(quantidadeAdulto));
+			BigDecimal precoTotalPorCrianca = precoPorDiaCrianca.multiply(new BigDecimal(quantidadeDias)).multiply(new BigDecimal(quantidadeCrianca));
 			
 			BigDecimal precoTotal = precoTotalPorAdulto.add(precoTotalPorCrianca);
 			
