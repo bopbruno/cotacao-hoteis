@@ -33,7 +33,7 @@ public class CotacaoController {
 	private BigDecimal VALOR_COMISSAO = new BigDecimal("0.7");
 	
 	@GetMapping(value = "/hotel/cidade")
-	public List<HotelDto> getContacaoHoteisCidade(@RequestParam int cityCode,
+	public List<HotelDto> getContacaoHoteisCidade(@RequestParam(required = true) int cityCode,
 			@ApiParam(value = "ddMMyyyy",required = true) @RequestParam(required = true) @DateTimeFormat(pattern="ddMMyyyy") Date checkin,
 			@ApiParam(value = "ddMMyyyy",required = true) @RequestParam(required = true) @DateTimeFormat(pattern="ddMMyyyy") Date checkout,
 			@RequestParam(required = true) int quantidadeAdultos,
@@ -57,7 +57,7 @@ public class CotacaoController {
 	}
 
 	@GetMapping(value = "/hotel")
-	public HotelDto getCotacaoHotel(@RequestParam int idHotel,
+	public HotelDto getCotacaoHotel(@RequestParam(required = true) int idHotel,
 			@ApiParam(value = "ddMMyyyy",required = true) @RequestParam(required = true) @DateTimeFormat(pattern="ddMMyyyy") Date checkin,
 			@ApiParam(value = "ddMMyyyy",required = true) @RequestParam(required = true) @DateTimeFormat(pattern="ddMMyyyy") Date checkout,
 			@RequestParam(required = true) int quantidadeAdultos,
