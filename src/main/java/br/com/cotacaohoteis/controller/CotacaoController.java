@@ -38,7 +38,12 @@ public class CotacaoController {
 			@RequestParam(required = true) int quantidadeAdultos,
 			@RequestParam(required = true) int quantidadeCriancas) {
 		
+		if(checkout.before(checkin)) {
+			return new ArrayList<HotelDto>();
+		}
+		
 		long diffInMillies = Math.abs(checkout.getTime() - checkin.getTime());
+		
    	    int quantidadeDias = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 		
 		List<Hotel> hoteis = cotacaoService.getCotacaoHoteisCidade(cityCode);
@@ -60,6 +65,10 @@ public class CotacaoController {
 			@RequestParam(required = true) int quantidadeAdultos,
 			@RequestParam(required = true) int quantidadeCriancas) {
 		
+		if(checkout.before(checkin)) {
+			return new HotelDto();
+		}
+				
 		long diffInMillies = Math.abs(checkout.getTime() - checkin.getTime());
    	    int quantidadeDias = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 		
