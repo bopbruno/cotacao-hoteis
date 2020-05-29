@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -50,10 +51,7 @@ public class CotacaoController {
 		
 		List<HotelDto> hoteisDto = new ArrayList<HotelDto>();
 		
-		int tamanho = hoteis.size();
-		for(int i =0; i < tamanho; i++) {
-			hoteisDto.add(this.converterHotelParaHotelDto(hoteis.get(i),quantidadeAdultos,quantidadeCriancas,quantidadeDias));
-		}
+		hoteisDto = hoteis.stream().map(hotel -> converterHotelParaHotelDto(hotel,quantidadeAdultos,quantidadeCriancas,quantidadeDias)).collect(Collectors.toList());
 		
 		return hoteisDto;
 	}
@@ -97,7 +95,7 @@ public class CotacaoController {
 		
 		for(int i=0;i<tamanho;i++) {
 			
-			Room room = rooms.get(i);
+			Room room = rooms.remove(0);
 			
 			Map<String, BigDecimal> priceDetailDto = new HashMap<>();
 			
