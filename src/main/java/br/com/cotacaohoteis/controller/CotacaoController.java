@@ -102,8 +102,8 @@ public class CotacaoController {
 			BigDecimal precoPorDiaAdulto = room.getPrice().get("adult");
 			BigDecimal precoPorDiaCrianca = room.getPrice().get("child");
 			
-			precoPorDiaAdulto = precoPorDiaAdulto.multiply(new BigDecimal(quantidadeDias)).multiply(new BigDecimal(quantidadeAdulto));
-			precoPorDiaCrianca = precoPorDiaCrianca.multiply(new BigDecimal(quantidadeDias)).multiply(new BigDecimal(quantidadeCrianca));
+			precoPorDiaAdulto = precoPorDiaAdulto.multiply(new BigDecimal(quantidadeAdulto));
+			precoPorDiaCrianca = precoPorDiaCrianca.multiply(new BigDecimal(quantidadeCrianca));
 			
 			//calcula a comissao
 			precoPorDiaAdulto = precoPorDiaAdulto.divide(VALOR_COMISSAO, 2,RoundingMode.FLOOR);
@@ -112,7 +112,10 @@ public class CotacaoController {
 			priceDetailDto.put("pricePerDayAdult", precoPorDiaAdulto);
 			priceDetailDto.put("pricePerDayChild", precoPorDiaCrianca);
 			
-			BigDecimal precoTotal = precoPorDiaAdulto.add(precoPorDiaCrianca);
+			BigDecimal precoTotalPorAdulto = precoPorDiaAdulto.multiply(new BigDecimal(quantidadeDias));
+			BigDecimal precoTotalPorCrianca = precoPorDiaCrianca.multiply(new BigDecimal(quantidadeDias));
+			
+			BigDecimal precoTotal = precoTotalPorAdulto.add(precoTotalPorCrianca);
 			
 			RoomDto roomDto = new RoomDto();
 			roomDto.setRoomID(room.getRoomID());

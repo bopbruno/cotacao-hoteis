@@ -66,15 +66,15 @@ public class CotacaoControllerTest {
 		
 		BDDMockito.given(this.cotacaoService.getCotacaoHoteisCidade(Mockito.anyInt())).willReturn(hoteis);
 		
-		mvc.perform(MockMvcRequestBuilders.get("/hotel/cidade?cityCode=9626&checkin=27052020&checkout=28052020&quantidadeAdultos=1&quantidadeCriancas=1").accept(MediaType.APPLICATION_JSON))
+		mvc.perform(MockMvcRequestBuilders.get("/hotel/cidade?cityCode=9626&checkin=20052020&checkout=30052020&quantidadeAdultos=1&quantidadeCriancas=0").accept(MediaType.APPLICATION_JSON))
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.[0].id").value(0))
 		.andExpect(jsonPath("$.[0].cityName").value("São Paulo"))
 		.andExpect(jsonPath("$.[0].rooms.[0].roomID").value(0))
 		.andExpect(jsonPath("$.[0].rooms.[0].categoryName").value("Standard"))
-		.andExpect(jsonPath("$.[0].rooms.[0].totalPrice").value("3058.11"))		
+		.andExpect(jsonPath("$.[0].rooms.[0].totalPrice").value("16917.4"))		
 		.andExpect(jsonPath("$.[0].rooms.[0].priceDetail.pricePerDayAdult").value("1691.74"))
-		.andExpect(jsonPath("$.[0].rooms.[0].priceDetail.pricePerDayChild").value("1366.37"))
+		.andExpect(jsonPath("$.[0].rooms.[0].priceDetail.pricePerDayChild").value("0.0"))
 		;
 		
 	}
